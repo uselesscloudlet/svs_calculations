@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Troop Training Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 100%;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+    .section {
+      margin-bottom: 24px;
+    }
+    .section h2 {
+      font-size: 1.2em;
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+    }
+    .field {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 6px;
+      font-size: 0.95em;
+    }
+    input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      box-sizing: border-box;
+    }
+    input[type="text"] {
+      background: #f0f8ff;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .output {
+      background: #eef7ff;
+      border: 1px solid #bee1f4;
+    }
+    .buff-toggle {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .buff-toggle label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .buff-toggle input {
+      margin: 0;
+    }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #95a5a6;
+      font-size: 0.85em;
+    }
+
+    /* Mobile optimization */
+    @media (max-width: 480px) {
+      .container {
+        padding: 16px;
+      }
+      h1 {
+        font-size: 1.3em;
+      }
+      .section h2 {
+        font-size: 1.1em;
+      }
+      label {
+        font-size: 0.9em;
+      }
+      input {
+        font-size: 1em;
+        padding: 10px;
+      }
+      .buff-toggle {
+        gap: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚔️ Troop Training Calculator</h1>
+
+    <!-- INPUT DATA -->
+    <div class="section">
+      <h2>Input Data</h2>
+
+      <div class="field">
+        <label>Troops per Training</label>
+        <input type="number" id="troopsAmount" value="1188" />
+      </div>
+
+      <div class="field">
+        <label>Training Time (Hours)</label>
+        <input type="number" id="trainHours" value="14" />
+      </div>
+
+      <div class="field">
+        <label>Training Time (Minutes)</label>
+        <input type="number" id="trainMinutes" value="56" />
+      </div>
+
+      <div class="field">
+        <label>Speed Ups Total (Minutes)</label>
+        <input type="number" id="speedUps" value="145172" />
+      </div>
+
+      <div class="field">
+        <label>Is Training Buff Active?</label>
+        <div class="buff-toggle">
+          <label><input type="radio" name="buff" value="yes" checked> Yes</label>
+          <label><input type="radio" name="buff" value="no"> No</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Do You Have Ministry of Education?</label>
+        <div class="buff-toggle">
+          <label><input type="radio" name="ministry" value="yes"> Yes</label>
+          <label><input type="radio" name="ministry" value="no" checked> No</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="section">
+      <h2>Results</h2>
+
+      <div class="field">
+        <label>Final Troops per Training</label>
+        <input type="text" id="finalTroops" class="output" readonly />
+      </div>
+
+      <div class="field">
+        <label>Total Training Time (Minutes)</label>
+        <input type="text" id="totalMinutes" class="output" readonly />
+      </div>
+
+      <div class="field">
+        <label>Training Time (Days/Hours/Minutes)</label>
+        <input type="text" id="timeFormat" class="output" readonly />
+      </div>
+    </div>
+
+    <!-- OUTPUT DATA -->
+    <div class="section">
+      <h2>Output Data</h2>
+
+      <div class="field">
+        <label>How Many Times Can You Train?</label>
+        <input type="text" id="trainCount" class="output" readonly />
+      </div>
+
+      <div class="field">
+        <label>Total Troops You Can Get</label>
+        <input type="text" id="totalTroops" class="output" readonly />
+      </div>
+    </div>
+
+    <footer>
+      Troop Training Calculator &copy; <script>document.write(new Date().getFullYear())</script>
+    </footer>
+  </div>
+
+  <script>
+    /**
+     * Updates all calculations in real-time based on input and selected buffs.
+     */
+    function updateCalculations() {
+      // Get input values
+      const troopsAmount = parseFloat(document.getElementById("troopsAmount").value) || 0;
+      const trainHours = parseFloat(document.getElementById("trainHours").value) || 0;
+      const trainMinutes = parseFloat(document.getElementById("trainMinutes").value) || 0;
+      const speedUpsTotal = parseFloat(document.getElementById("speedUps").value) || 0;
+
+      // Get buff statuses
+      const hasBuff = document.querySelector('input[name="buff"]:checked').value === "yes";
+      const hasMinistry = document.querySelector('input[name="ministry"]:checked').value === "yes";
+
+      // Base training time in minutes
+      const baseTimeMinutes = trainHours * 60 + trainMinutes;
+
+      // Apply buffs: time increases (slower training)
+      let finalTimeMinutes = baseTimeMinutes;
+      if (hasBuff) finalTimeMinutes *= 3;        // +200% time
+      if (hasMinistry) finalTimeMinutes *= 1.5;  // +50% time
+
+      // Apply buffs: troop count increases
+      let finalTroops = troopsAmount;
+      if (hasBuff) finalTroops *= 3;             // +200% troops
+      if (hasMinistry) finalTroops += 200;       // +200 fixed
+
+      // How many trainings fit in total Speed Ups?
+      const timesCanTrain = Math.floor(speedUpsTotal / finalTimeMinutes);
+      const totalTroops = timesCanTrain * finalTroops;
+
+      // Format time: X days Y hours Z minutes
+      const total = Math.round(finalTimeMinutes);
+      const days = Math.floor(total / 1440);
+      const hours = Math.floor((total % 1440) / 60);
+      const minutes = total % 60;
+      const timeString = `${days} days ${hours} hours ${minutes} minutes`;
+
+      // Update outputs
+      document.getElementById("finalTroops").value = Math.round(finalTroops);
+      document.getElementById("totalMinutes").value = total;
+      document.getElementById("timeFormat").value = timeString;
+      document.getElementById("trainCount").value = timesCanTrain;
+      document.getElementById("totalTroops").value = new Intl.NumberFormat().format(totalTroops);
+    }
+
+    // Update on any input change
+    document.addEventListener("input", updateCalculations);
+
+    // Initial calculation
+    window.onload = updateCalculations;
+  </script>
+</body>
+</html>
